@@ -86,6 +86,26 @@ export default class TimeMachine extends React.Component<IOwnProps> {
                             font-size:inherit;
                             color:inherit;
                         }
+                        
+                        .monthly {
+                            font-size: 24px;
+                            padding: 5px 20px;
+                            background-color: #fff;
+                            border-radius: 10px 0px 0 10px;
+                            border: 1px solid #b9b9b9;
+                        }
+                        
+                        .weekly {
+                            font-size: 24px;
+                            padding: 5px 20px;
+                            background-color: #fff;
+                            border-radius: 0px 10px 10px 0px;
+                            border: 1px solid #b9b9b9;
+                        }
+                        
+                        .type-switch {
+                            display:inline-block;
+                        }
                     `}
                 </style>
                 <button onClick={() => this.props.store.prevMonth()}>&lt;</button>
@@ -95,6 +115,17 @@ export default class TimeMachine extends React.Component<IOwnProps> {
                 }
 
                 <button onClick={() => this.props.store.nextMonth()}>&gt;</button>
+
+
+                <div className='type-switch'>
+                    <button className='monthly'>
+                        Monthly
+                    </button>
+
+                    <button className='weekly'>
+                        Weekly
+                    </button>
+                </div>
             </div>
         )
     }
