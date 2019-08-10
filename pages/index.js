@@ -1,6 +1,8 @@
 import React from 'react';
-
+import ControlView from '../components/ControlView';
+import CalendarView from '../components/CalendarView';
 
 export default () => <div>
-    Hello World
+    <ControlView/>
+    <CalendarView/>
 </div>
