@@ -1,12 +1,11 @@
 import React from 'react';
-import TimeMachine from "./TimeMachine";
+import TimeMachine, {IOwnProps as TMProps} from "./TimeMachine";
 
-
-export default class ControlView extends React.Component {
+export default class ControlView extends React.Component<TMProps> {
     render(){
         return (
             <div>
-                <TimeMachine/>
+                <TimeMachine {...this.props}/>
             </div>
         )
     }

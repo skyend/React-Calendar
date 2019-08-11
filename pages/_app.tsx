@@ -5,6 +5,7 @@ import React from 'react'
 import { initializeStore, IStore } from '../stores'
 import '../assets/style/global.less';
 import ModalRender from "../components/Modal/ModalRender";
+import ModalStore from "../stores/modalStore";
 
 interface IOwnProps {
     isServer: boolean
@@ -35,17 +36,19 @@ class MyApp extends App {
     }
 
     private store: IStore
+    private modalStore: ModalStore;
 
     constructor(props) {
         super(props)
         this.store = initializeStore(props.isServer, props.initialState) as IStore
+        this.modalStore = new ModalStore();
     }
 
     public render() {
         const { Component, pageProps } = this.props
         return (
             <Container>
-                <Provider store={this.store}>
+                <Provider store={this.store} modal={this.modalStore}>
                     <ModalRender/>
                     <Component {...pageProps} />
                 </Provider>

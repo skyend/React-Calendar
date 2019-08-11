@@ -154,7 +154,7 @@ class WeeklyTable extends React.Component<IWeeklyTableProps> {
         let isAM = true;
         for(let i = this.props.startHour; i < this.props.endHour; i++ ){
 
-            if( i > 12 ){
+            if( i > 11 ){
                 isAM = false;
             }
 

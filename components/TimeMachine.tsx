@@ -4,8 +4,9 @@ import {computed, observe} from "mobx";
 import classnames from 'classnames';
 import {IStore} from "../stores";
 
-interface IOwnProps {
-    store? : IStore
+export interface IOwnProps {
+    store? : IStore;
+    noSwitch?: boolean;
 }
 
 
@@ -163,20 +164,24 @@ export default class TimeMachine extends React.Component<IOwnProps> {
 
                 <button onClick={this.next}>&gt;</button>
 
+                {
+                    !this.props.noSwitch && (
+                        <div className='type-switch'>
+                            <button
+                                className={classnames('monthly', this.currentType === 'monthly' && 'active')}
+                                onClick={()=> this.props.store.showMonthly()}>
+                                Monthly
+                            </button>
 
-                <div className='type-switch'>
-                    <button
-                        className={classnames('monthly', this.currentType === 'monthly' && 'active')}
-                        onClick={()=> this.props.store.showMonthly()}>
-                        Monthly
-                    </button>
+                            <button
+                                className={classnames('weekly', this.currentType === 'weekly' && 'active')}
+                                onClick={()=> this.props.store.showWeekly()}>
+                                Weekly
+                            </button>
+                        </div>
+                    )
+                }
 
-                    <button
-                        className={classnames('weekly', this.currentType === 'weekly' && 'active')}
-                        onClick={()=> this.props.store.showWeekly()}>
-                        Weekly
-                    </button>
-                </div>
             </div>
         )
     }

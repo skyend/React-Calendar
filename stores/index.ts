@@ -1,3 +1,4 @@
+import React from 'react';
 import {
     applySnapshot,
     Instance,
@@ -113,7 +114,7 @@ export const initializeStore = (isServer, snapshot = null) => {
         store = Store.create({ year, month, lastUpdate: Date.now(), type:'monthly', week:0, startHour : 10, endHour: 20})
     }
     if ((store as any) === null) {
-        store = Store.create({ year, month, lastUpdate: Date.now(), type:'monthly', week:0,startHour : 10, endHour: 20 })
+        store = Store.create({ year, month, lastUpdate: Date.now(), type:'monthly', week:0,startHour : 10, endHour: 20})
     }
     if (snapshot) {
         applySnapshot(store, snapshot)

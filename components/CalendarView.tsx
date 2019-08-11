@@ -7,7 +7,7 @@ import {IStore} from "../stores";
 
 
 interface IMyOwnProps {
-    store?: IStore
+    store?: IStore;
 }
 
 

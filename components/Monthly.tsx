@@ -11,14 +11,17 @@ import {
     IYearMonth,
     WEEK_DAYS
 } from "../supports/dateCalculator";
+import ModalStore from "../stores/modalStore";
+import Scheduler from "./Scheduler";
 
 
 interface IOwnProps {
     store? : IStore
+    modal? : ModalStore
 }
 
 
-@inject("store")
+@inject("store", "modal")
 @observer
 export default class Monthly extends React.Component<IOwnProps> {
     constructor(props){
@@ -35,11 +38,29 @@ export default class Monthly extends React.Component<IOwnProps> {
         return this.props.store.month;
     }
 
+    clickDay = (date:IYearMonth, day:number) => {
+        this.props.modal.open(Scheduler, {
+            start : {
+                ...date,
+                day,
+                hour:1,
+                minute: 1,
+            },
+
+            end : {
+                ...date,
+                day,
+                hour:1,
+                minute: 1,
+            }
+        });
+    }
+
 
     render(){
         return (
             <div className='monthly'>
-                <MonthlyTable month={this.currentMonth} year={this.currentYear}/>
+                <MonthlyTable month={this.currentMonth} year={this.currentYear} onClickColumn={ this.clickDay }/>
             </div>
         )
     }
@@ -48,11 +69,18 @@ export default class Monthly extends React.Component<IOwnProps> {
 interface IMonthlyTableProps {
     month: number;
     year: number;
+    onClickColumn: (date: IYearMonth, day:number) => void;
+    columnHeight?: number;
+    fontSize?: number;
 }
 
 
 @observer
 export class MonthlyTable extends React.Component<IMonthlyTableProps> {
+    static defaultProps = {
+        columnHeight: 100,
+        fontSize:18,
+    }
     constructor(props){
         super(props)
     }
@@ -66,6 +94,16 @@ export class MonthlyTable extends React.Component<IMonthlyTableProps> {
     }
 
     @computed
+    get currentMonthCriterion() : IYearMonth {
+        const date = {
+            month: this.props.month,
+            year : this.props.year,
+        };
+
+        return date;
+    }
+
+    @computed
     get lastMonthCriterion() : IYearMonth {
         const date = decreaseMonth({
             month: this.props.month,
@@ -74,6 +112,8 @@ export class MonthlyTable extends React.Component<IMonthlyTableProps> {
 
         return date;
     }
+
+
 
     @computed
     get nextMonthCriterion() : IYearMonth {
@@ -120,20 +160,33 @@ export class MonthlyTable extends React.Component<IMonthlyTableProps> {
             }
         }
 
+        let criterion = this.currentMonthCriterion;
         if( row === 0 && day > 7 ){
             dayOfLastMonth = true;
+            criterion = this.lastMonthCriterion;
         }
 
         if( row > 3 && day < 7 ){
             dayOfNextMonth = true;
+            criterion = this.nextMonthCriterion;
         }
 
+
         return (
-            <td key={day} className={classnames('day', dayOfLastMonth && 'last-month-day', dayOfNextMonth && 'next-month-day', 'weekOfDay'+col)}>
+            <td
+                key={day}
+                className={classnames('day', dayOfLastMonth && 'last-month-day', dayOfNextMonth && 'next-month-day', 'weekOfDay'+col)}
+                onClick={() => this.props.onClickColumn(criterion, day) }>
                 <style jsx>
                     {`
                         td {
                             border-right:1px solid #d4d4d4;
+                            transition:background-color .3s;
+                        }
+                        
+                        td:hover {
+                            background-color:#aee1ff;
+                            cursor:pointer;
                         }
                         
                         td:last-child {
@@ -150,11 +203,11 @@ export class MonthlyTable extends React.Component<IMonthlyTableProps> {
                         
                         td .day {
                             padding:10px;
-                            font-size:18px;
+                            font-size:${this.props.fontSize}px;
                         }
                         
                         .column-wrapper {
-                            min-height:100px;
+                            min-height:${this.props.columnHeight}px;
                         }
                         
                         .last-month-day {
