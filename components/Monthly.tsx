@@ -44,14 +44,14 @@ export default class Monthly extends React.Component<IOwnProps> {
                 ...date,
                 day,
                 hour:1,
-                minute: 1,
+                minute: 0,
             },
 
             end : {
                 ...date,
                 day,
-                hour:1,
-                minute: 1,
+                hour:2,
+                minute: 0,
             }
         });
     }
@@ -72,6 +72,7 @@ interface IMonthlyTableProps {
     onClickColumn: (date: IYearMonth, day:number) => void;
     columnHeight?: number;
     fontSize?: number;
+    selected?: IYearMonth;
 }
 
 
@@ -81,6 +82,7 @@ export class MonthlyTable extends React.Component<IMonthlyTableProps> {
         columnHeight: 100,
         fontSize:18,
     }
+
     constructor(props){
         super(props)
     }
@@ -150,6 +152,7 @@ export class MonthlyTable extends React.Component<IMonthlyTableProps> {
 
     renderDay(row,col, day){
         let monthSign = null;
+        let selected = false;
         let dayOfLastMonth = false;
         let dayOfNextMonth = false;
         if( day === 0 ){
@@ -171,11 +174,20 @@ export class MonthlyTable extends React.Component<IMonthlyTableProps> {
             criterion = this.nextMonthCriterion;
         }
 
+        if( this.props.selected ){
+            const selectedDate = this.props.selected;
+
+            if( selectedDate.month === criterion.month && selectedDate.year === criterion.year && selectedDate.day === day ){
+                selected = true;
+            }
+        }
+
+
 
         return (
             <td
                 key={day}
-                className={classnames('day', dayOfLastMonth && 'last-month-day', dayOfNextMonth && 'next-month-day', 'weekOfDay'+col)}
+                className={classnames('day', dayOfLastMonth && 'last-month-day', dayOfNextMonth && 'next-month-day', 'weekOfDay'+col, selected && 'selected')}
                 onClick={() => this.props.onClickColumn(criterion, day) }>
                 <style jsx>
                     {`
@@ -189,6 +201,8 @@ export class MonthlyTable extends React.Component<IMonthlyTableProps> {
                             cursor:pointer;
                         }
                         
+                        
+                       
                         td:last-child {
                             border:0;
                         }
@@ -218,6 +232,13 @@ export class MonthlyTable extends React.Component<IMonthlyTableProps> {
                          .next-month-day {
                             background-color: #f3f9ff;
                             color: #246fb9;
+                        }
+                        
+                        td.selected {
+                             
+                            background-color: #318dec;
+                            color: #fff;
+                            font-weight: bold;
                         }
                     `}
                 </style>

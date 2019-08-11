@@ -4,6 +4,7 @@ export interface IYearMonth {
     month: number;
     year: number;
     week?:number;
+    day?: number;
 }
 
 const daysOfMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];

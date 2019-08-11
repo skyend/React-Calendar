@@ -11,14 +11,18 @@ import {
     IYearMonth,
     WEEK_DAYS
 } from "../supports/dateCalculator";
+import {hour24to12} from "../supports/time";
+import Scheduler from "./Scheduler";
+import ModalStore from "../stores/modalStore";
 
 
 interface IOwnProps {
-    store? : IStore
+    store? : IStore;
+    modal? : ModalStore;
 }
 
 
-@inject("store")
+@inject("store", "modal")
 @observer
 export default class Weekly extends React.Component<IOwnProps> {
     constructor(props){
@@ -50,15 +54,35 @@ export default class Weekly extends React.Component<IOwnProps> {
         return this.props.store.endHour;
     }
 
+
+    clickDay = (date:IYearMonth, day:number, hour: number) => {
+        this.props.modal.open(Scheduler, {
+            start : {
+                ...date,
+                day,
+                hour:hour,
+                minute: 0,
+            },
+
+            end : {
+                ...date,
+                day,
+                hour:hour+1,
+                minute: 0,
+            }
+        });
+    }
+
     render(){
         return (
             <div className='monthly'>
                 <WeeklyTable
+                    onClickColumn={this.clickDay}
                     startHour={this.startHour}
                     endHour={this.endHour}
                     year={this.currentYear}
                     month={this.currentMonth}
-                    week={this.currentWeek}></WeeklyTable>
+                    week={this.currentWeek}/>
             </div>
         )
     }
@@ -71,6 +95,7 @@ interface IWeeklyTableProps {
     week: number;
     startHour: number;
     endHour: number;
+    onClickColumn: (date: IYearMonth, day:number, h:number) => void;
 }
 
 
@@ -86,6 +111,16 @@ class WeeklyTable extends React.Component<IWeeklyTableProps> {
         const date = new Date(`${this.props.year}/${this.props.month+1}/1`);
 
         return date.getUTCDay();
+    }
+
+    @computed
+    get currentMonthCriterion() : IYearMonth {
+        const date = {
+            month: this.props.month,
+            year : this.props.year,
+        };
+
+        return date;
     }
 
     @computed
@@ -131,12 +166,29 @@ class WeeklyTable extends React.Component<IWeeklyTableProps> {
         return buildCalendarDaysMap(this.totalScreenDays, this.monthBeginDayOfWeek, this.monthDays, this.lastMonthDays);
     }
 
-    renderColumns(){
+
+    clickColumn(h, day, date: IYearMonth){
+        this.props.onClickColumn(date, day, h);
+    }
+
+    renderColumns(h){
         let columns = [];
 
         for(let i = 0; i < 7; i++ ){
+            let day = this.daysMap[this.props.week][i];
+
+
+            let criterion = this.currentMonthCriterion;
+            if( this.props.week === 0 && day > 7 ){
+                criterion = this.lastMonthCriterion;
+            }
+
+            if( this.props.week > 3 && day < 7 ){
+                criterion = this.nextMonthCriterion;
+            }
+
             columns.push(
-                <td key={i}>
+                <td className="hour" key={i} onClick={() => this.clickColumn(h, day, criterion)}>
 
                     <div className='column-wrapper'>
 
@@ -151,20 +203,18 @@ class WeeklyTable extends React.Component<IWeeklyTableProps> {
     renderRows(){
         let rows = [];
 
-        let isAM = true;
+        let convertdHour ;
         for(let i = this.props.startHour; i < this.props.endHour; i++ ){
+            convertdHour = hour24to12(i);
 
-            if( i > 11 ){
-                isAM = false;
-            }
 
 
             rows.push(
                 <tr key={i}>
                     <td className='time'>
-                        {isAM ? "오전":"오후"} { (i) % 12 + 1} 시
+                        {convertdHour.am ? "오전":"오후"} { convertdHour.hour } 시
                     </td>
-                    { this.renderColumns() }
+                    { this.renderColumns(i) }
                 </tr>
             )
         }
@@ -259,6 +309,15 @@ class WeeklyTable extends React.Component<IWeeklyTableProps> {
                         th .day {
                             padding:10px;
                             font-size:18px;
+                        }
+                        
+                        td.hour { 
+                            transition:background-color .3s;
+                        }
+                        
+                        td.hour:hover {
+                            background-color:#aee1ff;
+                            cursor:pointer;
                         }
                         
                         .column-wrapper {

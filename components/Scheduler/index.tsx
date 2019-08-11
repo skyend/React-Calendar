@@ -1,7 +1,15 @@
 import React from 'react';
+import classnames from 'classnames';
 import zeroPadding from "../../supports/padding";
 import DatePicker from "../DatePicker/async";
+import TimePicker from "../TimePicker/async";
+import {hour24to12} from "../../supports/time";
 
+
+interface ITime {
+    hour: number;
+    minute: number;
+}
 
 interface IDate {
     year: number;
@@ -21,7 +29,9 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
     state: {
         start: IDate;
         end:IDate;
-        openedDatePicker: boolean
+        datePickerTarget: string;
+        timePickerTarget: string;
+        title: string;
     };
 
     constructor(props){
@@ -30,37 +40,95 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
         this.state = {
             start: props.start,
             end: props.end,
-            openedDatePicker: false,
+            datePickerTarget: '',
+            timePickerTarget: '',
+            title:'',
         }
     }
 
-    selectDate = () => {
+    delete = () => {
 
+    }
+
+    save = () => {
+        if( !this.state.title ){
+            alert('Input the schedule title');
+            return;
+        }
+    }
+
+    inputTitle = (e) => {
+        console.log(e.nativeEvent);
+        this.setState({
+            title : e.nativeEvent.target.value,
+        })
+    }
+
+    selectDate = (date, day) => {
+        this.setState({
+            [this.state.datePickerTarget] : {
+                ...(this.state[this.state.datePickerTarget]),
+                year: date.year,
+                month: date.month,
+                day: day,
+            },
+
+            'end' : {
+                ...(this.state[this.state.datePickerTarget]),
+                year: date.year,
+                month: date.month,
+                day: day,
+            },
+
+            datePickerTarget:'',
+        });
+    }
+
+    selectTime = (time : ITime) => {
+        this.setState({
+            [this.state.timePickerTarget] : {
+                ...(this.state[this.state.timePickerTarget]),
+                hour: time.hour,
+            },
+
+            'end' : {
+                ...(this.state[this.state.timePickerTarget]),
+                hour: time.hour + 1,
+            },
+
+            timePickerTarget:'',
+        });
     }
 
     openDatePicker(target){
-        this.setState({ openedDatePicker: true });
-        console.log('pick')
+        if( target === 'start' ){
+            this.setState({ datePickerTarget: target });
+        }
+    }
+
+    openTimePicker(target){
+        if( target === 'start' ){
+            this.setState({ timePickerTarget: target });
+        }
     }
 
     renderDate(date: IDate, target){
-        let isAM = true;
-        if( date.hour > 11 ){
-            isAM = false;
-        }
 
 
-        let hour = (date.hour  + 1) % 12;
+        let hour = date.hour;
+        let convertedHour = hour24to12(hour);
+
         let min = date.minute ;
 
         return (
-            <div className='date'>
+            <div className={classnames('date', this.state.datePickerTarget === target && 'modifying-date',  this.state.timePickerTarget === target && 'modifying-time')}>
                 <style jsx>{`
                     .date {
                         display:inline-block;
                         background-color: #ecf6ff;
                     }
                     
+                 
                     .num {
                         font-weight:bold;
                     }
@@ -73,16 +141,29 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
                         display:inline-block;
                         cursor:pointer;
                     }
+                    
+                    .date.modifying-date  .controller.date{
+                        border: 1px solid #35b4ff;
+                        border-radius: 5px;
+                        padding: 5px;
+                    }
+                    
+                     .date.modifying-time  .controller.time{
+                        border: 1px solid #35b4ff;
+                        border-radius: 5px;
+                        padding: 5px;
+                    }
+                    
                 `}</style>
 
-                <div className='controller' onClick={ () => this.openDatePicker(target) }>
+                <div className='controller date' onClick={ () => this.openDatePicker(target) }>
                     <span className='right-space'><span className='num'>{ date.year }</span>년</span>
                     <span className='right-space'><span className='num'>{ zeroPadding(2, date.month + 1) }</span>월</span>
                     <span className='right-space'><span className='num'>{ zeroPadding(2, date.day + 1) }</span>일</span>
                 </div>
 
-                <div className='controller'>
-                    <span> {isAM ? "오전":"오후"} <span className='num'>{ zeroPadding(2,hour) } : { zeroPadding(2, min) }</span></span>
+                <div className='controller time' onClick={ () => this.openTimePicker(target) }>
+                    <span> {convertedHour.am ? "오전":"오후"} <span className='num'>{ zeroPadding(2,convertedHour.hour) } : { zeroPadding(2, min) }</span></span>
                 </div>
             </div>
         )
@@ -114,9 +195,7 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
                     }
                     
                     .btns {
-                        text-align:right;
-                        
-                       
+                        text-align:right; 
                     }
                     
                     button {
@@ -129,6 +208,7 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
                         background-color: #44a6ff;
                         outline: none;
                         margin-left: 10px;
+                        cursor:pointer;
                     }
                     
                     .divide {
@@ -136,10 +216,14 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
                         text-align:center;
                         display:inline-block;
                     }
+                    
+                    .time-picker-area {
+                        margin-left: 324px;
+                    }
                 `}</style>
 
                 <div>
-                    <input placeholder="일정 제목"/>
+                    <input placeholder="일정 제목" value={this.state.title} onChange={(e) => this.inputTitle(e)}/>
                 </div>
 
                 <div className='dates'>
@@ -154,14 +238,22 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
 
                 <div className='btns'>
                     <button onClick={() => this.props.close() }> 취소 </button>
-                    <button> 삭제 </button>
-                    <button> 저장 </button>
+                    <button onClick={() => this.delete() }> 삭제 </button>
+                    <button onClick={() => this.save() }> 저장 </button>
                 </div>
 
 
-                { this.state.openedDatePicker && (
+                { this.state.datePickerTarget && (
                     <React.Suspense fallback={<div>Loading...</div>}>
-                        <DatePicker onCancel={() => this.setState({openedDatePicker:false})} onSelect={this.selectDate}/>
+                        <DatePicker onCancel={() => this.setState({datePickerTarget:''})} onSelect={this.selectDate}/>
+                    </React.Suspense>
+                )}
+
+                { this.state.timePickerTarget && (
+                    <React.Suspense fallback={<div>Loading...</div>}>
+                        <div className='time-picker-area'>
+                            <TimePicker onCancel={() => this.setState({timePickerTarget:''})} onSelect={this.selectTime}/>
+                        </div>
                     </React.Suspense>
                 )}
             </div>

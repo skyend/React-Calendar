@@ -28,6 +28,15 @@ export default class DatePicker extends React.Component<IMyOwnProps> {
         }
     }
 
+    select = () => {
+        if( this.state.selectedDay ){
+
+            this.props.onSelect(this.state.selected, this.state.selectedDay)
+        } else {
+            alert('Couldn\'t select null. select a day');
+        }
+    }
+
     nextMonth = () => {
         let nextDate = increaseMonth({
             year : this.state.year,
@@ -119,11 +128,12 @@ export default class DatePicker extends React.Component<IMyOwnProps> {
                         year={this.state.year}
                         onClickColumn={ this.onSelect }
                         columnHeight={40}
-                        fontSize={12}/>
+                        fontSize={12}
+                        selected={{...this.state.selected, day : this.state.selectedDay}}/>
 
 
                     <button onClick={this.props.onCancel}> Cancel </button>
-                    <button onClick={() => this.props.onSelect(this.state.selected, this.state.selectedDay)}> OK </button>
+                    <button onClick={() => this.select()}> OK </button>
                 </div>
             </div>
         )

@@ -111,10 +111,10 @@ export const initializeStore = (isServer, snapshot = null) => {
 
 
     if (isServer) {
-        store = Store.create({ year, month, lastUpdate: Date.now(), type:'monthly', week:0, startHour : 10, endHour: 20})
+        store = Store.create({ year, month, lastUpdate: Date.now(), type:'monthly', week:0, startHour : 8, endHour: 22})
     }
     if ((store as any) === null) {
-        store = Store.create({ year, month, lastUpdate: Date.now(), type:'monthly', week:0,startHour : 10, endHour: 20})
+        store = Store.create({ year, month, lastUpdate: Date.now(), type:'monthly', week:0,startHour : 8, endHour: 22})
     }
     if (snapshot) {
         applySnapshot(store, snapshot)
