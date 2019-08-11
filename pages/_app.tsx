@@ -4,6 +4,7 @@ import App, { Container } from 'next/app'
 import React from 'react'
 import { initializeStore, IStore } from '../stores'
 import '../assets/style/global.less';
+import ModalRender from "../components/Modal/ModalRender";
 
 interface IOwnProps {
     isServer: boolean
@@ -45,6 +46,7 @@ class MyApp extends App {
         return (
             <Container>
                 <Provider store={this.store}>
+                    <ModalRender/>
                     <Component {...pageProps} />
                 </Provider>
             </Container>
