@@ -38,7 +38,7 @@ export default class TimeMachine extends React.Component<IOwnProps> {
                         }
                         
                         .month-box {
-                            width:200px;
+                            width:160px;
                             display: inline-block;
                         }
                     `}
@@ -60,7 +60,7 @@ export default class TimeMachine extends React.Component<IOwnProps> {
     render(){
         return (
             <div className='time-machine'>
-                <style>
+                <style jsx>
                     {`
                         .time-machine {
                             color:#333;

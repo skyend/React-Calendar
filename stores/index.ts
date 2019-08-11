@@ -5,6 +5,7 @@ import {
     SnapshotOut,
     types,
 } from 'mobx-state-tree'
+import {decreaseMonth, increaseMonth} from "../supports/dateCalculator";
 
 let store: IStore = null as any
 
@@ -18,11 +19,14 @@ const Store = types
 
         const prevMonth = () => {
             self.lastUpdate = new Date();
-            self.month--;
-            if( self.month < 0 ){
-                self.year--;
-                self.month = 11;
-            }
+
+            let {month, year} = decreaseMonth({
+                month: self.month,
+                year: self.year,
+            })
+
+            self.month = month;
+            self.year = year;
         }
 
         const prevYear = () => {
@@ -32,11 +36,14 @@ const Store = types
 
         const nextMonth = () => {
             self.lastUpdate = new Date();
-            self.month++;
-            if( self.month > 11 ){
-                self.year++;
-                self.month = 0;
-            }
+
+            let {month, year} = increaseMonth({
+                month: self.month,
+                year: self.year,
+            })
+
+            self.month = month;
+            self.year = year;
         }
 
         const nextYear = () => {
