@@ -5,7 +5,7 @@ import {
     SnapshotOut,
     types,
 } from 'mobx-state-tree'
-import {decreaseMonth, increaseMonth} from "../supports/dateCalculator";
+import {decreaseMonth, decreaseWeek, increaseMonth, increaseWeek} from "../supports/dateCalculator";
 
 let store: IStore = null as any
 
@@ -14,8 +14,24 @@ const Store = types
         lastUpdate: types.Date,
         year: types.number,
         month: types.number,
+        week: types.number,
+        type: types.string,
+        startHour: types.number,
+        endHour: types.number,
     })
     .actions(self => {
+
+        const showMonthly = () => {
+            self.lastUpdate = new Date();
+
+            self.type = 'monthly';
+        }
+
+        const showWeekly = () => {
+            self.lastUpdate = new Date();
+
+            self.type = 'weekly';
+        }
 
         const prevMonth = () => {
             self.lastUpdate = new Date();
@@ -51,7 +67,35 @@ const Store = types
             self.year++;
         }
 
-        return { prevMonth, prevYear, nextMonth, nextYear }
+        const nextWeek = () => {
+            self.lastUpdate = new Date();
+
+            let {month, year, week} = increaseWeek({
+                month: self.month,
+                year: self.year,
+                week: self.week,
+            })
+
+            self.month = month;
+            self.year = year;
+            self.week = week;
+        }
+
+        const prevWeek = () => {
+            self.lastUpdate = new Date();
+
+            let {month, year, week} = decreaseWeek({
+                month: self.month,
+                year: self.year,
+                week: self.week,
+            })
+
+            self.month = month;
+            self.year = year;
+            self.week = week;
+        }
+
+        return { prevMonth, prevYear, nextMonth, nextYear, showMonthly, showWeekly, nextWeek, prevWeek }
     })
 
 export type IStore = Instance<typeof Store>
@@ -66,10 +110,10 @@ export const initializeStore = (isServer, snapshot = null) => {
 
 
     if (isServer) {
-        store = Store.create({ year, month, lastUpdate: Date.now()})
+        store = Store.create({ year, month, lastUpdate: Date.now(), type:'monthly', week:0, startHour : 10, endHour: 20})
     }
     if ((store as any) === null) {
-        store = Store.create({ year, month, lastUpdate: Date.now()})
+        store = Store.create({ year, month, lastUpdate: Date.now(), type:'monthly', week:0,startHour : 10, endHour: 20 })
     }
     if (snapshot) {
         applySnapshot(store, snapshot)

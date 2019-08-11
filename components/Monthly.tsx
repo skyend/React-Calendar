@@ -3,7 +3,14 @@ import {inject, observer} from "mobx-react";
 import {computed, observe} from "mobx";
 import classnames from 'classnames';
 import {IStore} from "../stores";
-import {decreaseMonth, getMonthDays, increaseMonth, IYearMonth, WEEK_DAYS} from "../supports/dateCalculator";
+import {
+    buildCalendarDaysMap,
+    decreaseMonth,
+    getMonthDays,
+    increaseMonth,
+    IYearMonth,
+    WEEK_DAYS
+} from "../supports/dateCalculator";
 
 
 interface IOwnProps {
@@ -32,11 +39,6 @@ export default class Monthly extends React.Component<IOwnProps> {
     render(){
         return (
             <div className='monthly'>
-                <style>
-                    {`
-                       
-                    `}
-                </style>
                 <MonthlyTable month={this.currentMonth} year={this.currentYear}/>
             </div>
         )
@@ -50,7 +52,7 @@ interface IMonthlyTableProps {
 
 
 @observer
-class MonthlyTable extends React.Component<IMonthlyTableProps> {
+export class MonthlyTable extends React.Component<IMonthlyTableProps> {
     constructor(props){
         super(props)
     }
@@ -80,8 +82,6 @@ class MonthlyTable extends React.Component<IMonthlyTableProps> {
             year : this.props.year,
         });
 
-        console.log(date)
-
         return date;
     }
 
@@ -105,37 +105,7 @@ class MonthlyTable extends React.Component<IMonthlyTableProps> {
 
     @computed
     get daysMap(){
-        let rows = Math.ceil(this.totalScreenDays / 7);
-        let startDay = this.lastMonthDays - this.monthBeginDayOfWeek;
-        let arrayMap = [];
-
-        // for(let i = 0; i < this.totalScreenDays; i++ ){
-        //     if( i < this.monthBeginDayOfWeek ){
-        //         arrayMap.push( startDay + i );
-        //     } else if ( i < this.monthBeginDayOfWeek + this.monthDays  ){
-        //         arrayMap.push( i - this.monthBeginDayOfWeek );
-        //     } else {
-        //         arrayMap.push( i - this.monthBeginDayOfWeek + this.monthDays );
-        //     }
-        // }
-
-        let cursor ;
-        for(let i = 0; i < rows; i++ ){
-            arrayMap.push([]);
-            for(let j = 0; j < 7; j++ ){
-                cursor = i * 7 + j;
-
-                if( cursor < this.monthBeginDayOfWeek ){
-                    arrayMap[i].push( startDay + cursor );
-                } else if ( cursor < this.monthBeginDayOfWeek + this.monthDays  ){
-                    arrayMap[i].push( cursor - this.monthBeginDayOfWeek );
-                } else {
-                    arrayMap[i].push( cursor - (this.monthBeginDayOfWeek + this.monthDays) );
-                }
-            }
-        }
-
-        return arrayMap;
+        return buildCalendarDaysMap(this.totalScreenDays, this.monthBeginDayOfWeek, this.monthDays, this.lastMonthDays);
     }
 
     renderDay(row,col, day){
@@ -159,7 +129,7 @@ class MonthlyTable extends React.Component<IMonthlyTableProps> {
         }
 
         return (
-            <td key={day} className={classnames('day', dayOfLastMonth && 'last-month-day', dayOfNextMonth && 'next-month-day')}>
+            <td key={day} className={classnames('day', dayOfLastMonth && 'last-month-day', dayOfNextMonth && 'next-month-day', 'weekOfDay'+col)}>
                 <style jsx>
                     {`
                         td {

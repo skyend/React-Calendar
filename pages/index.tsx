@@ -1,6 +1,7 @@
 import React from 'react';
 import ControlView from '../components/ControlView';
 import CalendarView from '../components/CalendarView';
+import '../assets/style/calendar.less'
 
 export default () => <div className='calendar'>
     <style jsx>
