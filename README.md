@@ -1,4 +1,4 @@
-# Calendar For Kakao Pay
+# Kakao Calendar
 
 100% self-developed all about The Calendar.
 
