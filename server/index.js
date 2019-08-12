@@ -2,6 +2,7 @@
 const express = require('express')
 const next = require('next')
 const bodyParser = require('body-parser')
+var morgan = require('morgan')
 const config = require('../config');
 const port = config.PORT;
 const dev = process.env.NODE_ENV !== 'production'
@@ -13,7 +14,7 @@ let db = [];
 app.prepare().then(() => {
     const server = express()
 
-
+    server.use(morgan('combined'))
     server.use(bodyParser.json());
     server.post('/api/schedule/save', ( req, res, next ) => {
         const saveItem = req.body;
