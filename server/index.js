@@ -28,7 +28,7 @@ app.prepare().then(() => {
     server.delete('/api/schedule/:id', ( req, res, next ) => {
         const itemId = req.params.id;
 
-        db = db.filter((item) => itemId === item.id );
+        db = db.filter((item) => itemId !== item.id );
         console.log(db);
         res.status(200).json({code:'success'});
     });

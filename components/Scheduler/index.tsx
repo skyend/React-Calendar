@@ -5,6 +5,8 @@ import zeroPadding from "../../supports/padding";
 import DatePicker from "../DatePicker/async";
 import TimePicker from "../TimePicker/async";
 import {hour24to12} from "../../supports/time";
+import {inject, observer} from "mobx-react";
+import {IStore} from "../../stores";
 
 interface IItem {
     id: string;
@@ -29,11 +31,14 @@ interface IDate {
 }
 
 interface IMyOwnProps {
+    store?: IStore;
     start: IDate;
     end: IDate;
     close? : () => void;
 }
 
+@inject('store')
+@observer
 export default class Scheduler extends React.Component<IMyOwnProps> {
     state: {
         start: IDate;
@@ -55,6 +60,17 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
         }
     }
 
+    update = async () => {
+        let res = await axios.get(`/api/schedule/all`);
+
+        if( res.data.code === 'success' ){
+
+            await this.props.store.updateSchedules(res.data.items);
+        }
+
+        this.props.close();
+    }
+
     delete = async () => {
         if( !this.state.title ){
             alert('Input the schedule title');
@@ -65,7 +81,7 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
 
 
         let res = await axios.delete('/api/schedule/' + id);
-
+        await this.update();
         console.log(res);
     }
 
@@ -86,7 +102,7 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
 
 
         let res = await axios.post('/api/schedule/save', item);
-
+        await this.update();
         console.log(res);
     }
 

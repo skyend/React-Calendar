@@ -286,7 +286,7 @@ export class MonthlyTable extends React.Component<IMonthlyTableProps> {
                     </div>
                 </div>
 
-                {schedules.map((sc) => <ScheduleBlock {...sc} type='label'/>)}
+                {schedules.map((sc, i) => <ScheduleBlock {...sc} type='label' key={i}/>)}
             </td>
         )
     }
