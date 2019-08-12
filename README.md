@@ -4,9 +4,15 @@
 
 Didn't use any other UI Library.
 
+## TESTED IN
+
+* Chrome
+* Safari
+
 # Start Application
 
-## Tested In 
+## RUNNING ENVIRONMENT
+* Ubuntu 18.04 / CentOS 7.5 / MacOS
 * NodeJS Version 10.15.3
 * YARN Version 1.16.0
 
