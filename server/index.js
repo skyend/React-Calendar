@@ -37,10 +37,22 @@ app.prepare().then(() => {
     });
 
     server.get('/api/schedule/all', ( req, res, next ) => {
-        res.status(200).json({code:'success', items: db});
         console.log(db);
+        res.status(200).json({code:'success', items: db});
     });
 
+
+    server.get('/api/schedule/:id/read', ( req, res, next ) => {
+        const itemId = req.params.id;
+        console.log('itemId',itemId);
+        const found = db.find((item) => itemId === item.id );
+
+        if( found ){
+            res.status(200).json({code:'success', item:found});
+        } else {
+            res.status(404).json({code:'fail'});
+        }
+    });
 
     server.get('/api/schedule/:id/read', ( req, res, next ) => {
         const itemId = req.params.id;
