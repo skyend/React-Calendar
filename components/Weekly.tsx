@@ -15,11 +15,13 @@ import {hour24to12} from "../supports/time";
 import Scheduler from "./Scheduler";
 import ModalStore from "../stores/modalStore";
 import ScheduleBlock from "./ScheduleBlock";
+import WeeklyCell from "./WeeklyCell";
 
 
 interface IOwnProps {
     store? : IStore;
     modal? : ModalStore;
+    updateSchedules: () => void;
 }
 
 
@@ -80,6 +82,7 @@ export default class Weekly extends React.Component<IOwnProps> {
         return (
             <div className='monthly'>
                 <WeeklyTable
+                    updateSchedules={this.props.updateSchedules}
                     schedules={this.props.store.schedules}
                     onClickColumn={this.clickDay}
                     startHour={this.startHour}
@@ -101,6 +104,7 @@ interface IWeeklyTableProps {
     endHour: number;
     onClickColumn: (date: IYearMonth, day:number, h:number) => void;
     schedules?: Array<any>;
+    updateSchedules: () => void;
 }
 
 
@@ -210,19 +214,19 @@ class WeeklyTable extends React.Component<IWeeklyTableProps> {
 
 
             let schedules = this.scheduleMap[`${criterion.year}-${criterion.month}-${day}`] || [];
-            let foundCurrentSchedule = schedules.find((sc) => sc.hour === h );
 
-            console.log(foundCurrentSchedule, schedules);
+
 
             columns.push(
-                <td className="hour" key={i} onClick={() => this.clickColumn(h, day, criterion)}>
-
-                    <div className='column-wrapper'>
-                        { foundCurrentSchedule && (
-                            <ScheduleBlock {...foundCurrentSchedule} type={'block'}/>
-                        )}
-                    </div>
-                </td>
+                <WeeklyCell
+                    key={day}
+                    day={day}
+                    weekOfDay={i}
+                    criterion={criterion}
+                    schedules={schedules}
+                    week={this.props.week}
+                    hour={h}
+                    updateSchedules={this.props.updateSchedules}/>
             )
         }
 

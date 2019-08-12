@@ -2,10 +2,10 @@ import {types} from "mobx-state-tree";
 
 export const ScheduleModel  = types
     .model({
-        id: types.string,
+        id: types.maybeNull(types.string),
         year: types.number,
         month: types.number,
         day: types.number,
-        hour: types.number,
-        name: types.string,
+        hour: types.maybeNull(types.number),
+        name: types.maybeNull(types.string),
     });

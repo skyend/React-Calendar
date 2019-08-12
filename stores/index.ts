@@ -22,8 +22,23 @@ const Store = types
         endHour: types.number,
 
         schedules: types.array(ScheduleModel),
+        dragSchedule : types.maybeNull(ScheduleModel ),
+        hoveringCell : types.maybeNull(ScheduleModel),
     })
     .actions(self => {
+
+        const startDrag = (schedule) => {
+            self.dragSchedule = schedule;
+        }
+
+        const hoverCell = (schedule) => {
+            self.hoveringCell = schedule;
+        }
+
+        const endDrag = () => {
+            // self.dragSchedule = null;
+            self.hoveringCell = null;
+        }
 
         const updateSchedules = (schedules) => {
             self.lastUpdate = new Date();
@@ -105,7 +120,7 @@ const Store = types
             self.week = week;
         }
 
-        return { prevMonth, prevYear, nextMonth, nextYear, showMonthly, showWeekly, nextWeek, prevWeek, updateSchedules }
+        return { prevMonth, prevYear, nextMonth, nextYear, showMonthly, showWeekly, nextWeek, prevWeek, updateSchedules, startDrag, hoverCell, endDrag }
     })
 
 export type IStore = Instance<typeof Store>
@@ -119,10 +134,10 @@ export const initializeStore = (isServer, snapshot = null) => {
     const month = date.getUTCMonth();
 
     if (isServer) {
-        store = Store.create({ year, month, lastUpdate: Date.now(), type:'monthly', week:0, startHour : 8, endHour: 22})
+        store = Store.create({ year, month, lastUpdate: Date.now(), type:'monthly', week:0, startHour : 8, endHour: 22, dragSchedule: null, hoveringCell:null})
     }
     if ((store as any) === null) {
-        store = Store.create({ year, month, lastUpdate: Date.now(), type:'monthly', week:0,startHour : 8, endHour: 22})
+        store = Store.create({ year, month, lastUpdate: Date.now(), type:'monthly', week:0,startHour : 8, endHour: 22,dragSchedule: null, hoveringCell:null})
     }
     if (snapshot) {
         applySnapshot(store, snapshot)

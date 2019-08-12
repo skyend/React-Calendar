@@ -7,6 +7,8 @@ import TimePicker from "../TimePicker/async";
 import {hour24to12} from "../../supports/time";
 import {inject, observer} from "mobx-react";
 import {IStore} from "../../stores";
+import instance from "../../supports/api";
+import {getId} from "../../supports/schedule";
 
 interface IItem {
     id: string;
@@ -36,6 +38,7 @@ interface IMyOwnProps {
     end: IDate;
     title?:string;
     close? : () => void;
+    updateSchedules: () => void;
 }
 
 @inject('store')
@@ -62,14 +65,8 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
     }
 
     update = async () => {
-        let res = await axios.get(`/api/schedule/all`);
-
-        if( res.data.code === 'success' ){
-
-            await this.props.store.updateSchedules(res.data.items);
-        }
-
-        this.props.close();
+        await this.props.updateSchedules();
+        await this.props.close();
     }
 
     delete = async () => {
@@ -78,12 +75,16 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
             return;
         }
 
-        let id = `${this.state.start.year}-${this.state.start.month}-${this.state.start.day}-${this.state.start.hour}`;
+        let id = getId({
+            year : this.state.start.year,
+            month: this.state.start.month,
+            day : this.state.start.day,
+            hour: this.state.start.hour,
+        });
 
 
         let res = await axios.delete('/api/schedule/' + id);
         await this.update();
-        console.log(res);
     }
 
     save = async () => {
@@ -92,11 +93,16 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
             return;
         }
 
-        const id = `${this.state.start.year}-${this.state.start.month}-${this.state.start.day}-${this.state.start.hour}`;
+        let id = getId({
+            year : this.state.start.year,
+            month: this.state.start.month,
+            day : this.state.start.day,
+            hour: this.state.start.hour,
+        });
 
         try{
 
-            let duplicateCheckRes = await axios.get(`/api/schedule/${id}`);
+            let duplicateCheckRes = await axios.get(`/api/schedule/${id}/read`);
             if( duplicateCheckRes.data.code === 'success' && duplicateCheckRes.data.item ){
                 return alert('중복일정은 등록할 수 없습니다');
             }
@@ -116,13 +122,11 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
         };
 
 
-        let res = await axios.post('/api/schedule/save', item);
+        let res = await instance().post('/api/schedule/save', item);
         await this.update();
-        console.log(res);
     }
 
     inputTitle = (e) => {
-        console.log(e.nativeEvent);
         this.setState({
             title : e.nativeEvent.target.value,
         })

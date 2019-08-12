@@ -14,11 +14,13 @@ import {
 import ModalStore from "../stores/modalStore";
 import Scheduler from "./Scheduler";
 import ScheduleBlock from "./ScheduleBlock";
+import MonthlyCell from "./MonthlyCell";
 
 
 interface IOwnProps {
-    store? : IStore
-    modal? : ModalStore
+    store? : IStore;
+    modal? : ModalStore;
+    updateSchedules?: () => void;
 }
 
 
@@ -44,6 +46,7 @@ export default class Monthly extends React.Component<IOwnProps> {
 
 
         this.props.modal.open(Scheduler, {
+            updateSchedules: this.props.updateSchedules,
             start : {
                 ...date,
                 day,
@@ -64,7 +67,12 @@ export default class Monthly extends React.Component<IOwnProps> {
     render(){
         return (
             <div className='monthly'>
-                <MonthlyTable month={this.currentMonth} year={this.currentYear} onClickColumn={ this.clickDay } schedules={this.props.store.schedules}/>
+                <MonthlyTable
+                    month={this.currentMonth}
+                    year={this.currentYear}
+                    onClickColumn={ this.clickDay }
+                    schedules={this.props.store.schedules}
+                    updateSchedules={this.props.updateSchedules}/>
             </div>
         )
     }
@@ -78,6 +86,7 @@ interface IMonthlyTableProps {
     fontSize?: number;
     selected?: IYearMonth;
     schedules?: Array<any>;
+    updateSchedules?: () => void;
 }
 
 
@@ -205,96 +214,24 @@ export class MonthlyTable extends React.Component<IMonthlyTableProps> {
 
 
         let schedules = this.scheduleMap[`${criterion.year}-${criterion.month}-${day}`] || [];
-        schedules.sort((a,b) => {
-            if( a.hour > b.hour ){
-                return 1;
-            } else {
-                return -1;
-            }
-        });
 
 
         return (
-            <td
+            <MonthlyCell
+                updateSchedules={this.props.updateSchedules}
                 key={day}
-                className={classnames('day', dayOfLastMonth && 'last-month-day', dayOfNextMonth && 'next-month-day', 'weekOfDay'+col, selected && 'selected')}
-                onClick={() => this.props.onClickColumn(criterion, day) }>
-                <style jsx>
-                    {`
-                        td {
-                            border-right:1px solid #d4d4d4;
-                            transition:background-color .3s;
-                        }
-                        
-                        td:hover {
-                            background-color:#aee1ff;
-                            cursor:pointer;
-                        }
-                        
-                        
-                       
-                        td:last-child {
-                            border:0;
-                        }
-                        
-                        td {
-                            width: ${100 / 7}%;
-                        }
-                        
-                        td .month-sign {
-                            display:inline-block;
-                        }
-                        
-                        td .day {
-                            padding:10px;
-                            font-size:${this.props.fontSize}px;
-                        }
-                        
-                        .column-wrapper {
-                            min-height:${this.props.columnHeight}px;
-                        }
-                        
-                        .last-month-day {
-                            background-color:#eaeaea;
-                            color:#777;
-                        }
-                        
-                         .next-month-day {
-                            background-color: #f3f9ff;
-                            color: #246fb9;
-                        }
-                        
-                        td.selected {
-                             
-                            background-color: #318dec;
-                            color: #fff;
-                            font-weight: bold;
-                        }
-                    `}
-                </style>
-
-
-                <div className='column-wrapper'>
-                    {
-                        row === 0 && (
-                            <div>
-                                { WEEK_DAYS[col] }
-                            </div>
-                        )
-                    }
-                    <div className='day'>
-                        { monthSign && (
-                            <div className='month-sign'>
-                                {monthSign} 월
-                            </div>
-                        )}
-
-                        {day + 1} { day === 0 && '일' }
-                    </div>
-                </div>
-
-                {schedules.map((sc, i) => <ScheduleBlock {...sc} type='label' key={i}/>)}
-            </td>
+                day={day}
+                dayOfLastMonth={dayOfLastMonth}
+                dayOfNextMonth={dayOfNextMonth}
+                weekOfDay={col}
+                selected={selected}
+                criterion={criterion}
+                fontSize={this.props.fontSize}
+                columnHeight={this.props.columnHeight}
+                monthSign={monthSign}
+                schedules={schedules}
+                week={row}
+                onClickColumn={this.props.onClickColumn}/>
         )
     }
 

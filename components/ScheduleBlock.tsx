@@ -1,7 +1,10 @@
 import React from 'react';
+import classnames from 'classnames';
 import {inject, observer} from "mobx-react";
 import SchedulerAsync from "./Scheduler/async";
 import ModalStore from "../stores/modalStore";
+import {IStore} from "../stores";
+import {getId} from "../supports/schedule";
 
 interface IScheduleProps {
     name: string;
@@ -10,11 +13,14 @@ interface IScheduleProps {
     hour:string;
     day:string;
     type:string; // label, block
+    ghost:boolean;
     modal?: ModalStore;
+    store? : IStore;
+    updateSchedules: () => void;
 }
 
 
-@inject('modal')
+@inject('store','modal')
 @observer
 export default class ScheduleBlock extends React.Component<IScheduleProps> {
     constructor(props){
@@ -43,7 +49,32 @@ export default class ScheduleBlock extends React.Component<IScheduleProps> {
             },
 
             title: this.props.name,
+            updateSchedules: this.props.updateSchedules,
         });
+    }
+
+    dragStart = (e) => {
+        const { year, month, day, hour } = this.props;
+
+        const id = getId({
+            year,
+            month,
+            day ,
+            hour
+        });
+
+        this.props.store.startDrag({
+            id,
+            year,
+            month,
+            day,
+            hour,
+            name : this.props.name,
+        })
+    }
+
+    dragEnd = (e) => {
+        this.props.store.endDrag();
     }
 
     renderLabel(){
@@ -86,9 +117,20 @@ export default class ScheduleBlock extends React.Component<IScheduleProps> {
 
     render(){
         return (
-            <div className='schedule' onClick={this.click} >
+            <div
+                className={classnames('schedule', this.props.ghost && 'ghost')}
+                onClick={this.click}
+                onDragStart={this.dragStart}
+                onDragEnd={this.dragEnd}
+                draggable>
                 <style jsx>{`
-                    width:100%;
+                    .schedule{
+                        width:100%;
+                    }
+                    
+                    .schedule.ghost {
+                        opacity:0.6;
+                    }
                 `}</style>
                 {
                     this.props.type === 'label' ? this.renderLabel() : this.renderBlock()
