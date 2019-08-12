@@ -33,7 +33,22 @@ export default class ScheduleBlock extends React.Component<IScheduleProps> {
     }
 
     renderBlock(){
-
+        return (
+            <div className='label'>
+                <style jsx>{`
+                    .label {
+                        font-size: 14px;
+                        color: #fff;
+                        font-weight: 600;
+                        background-color: #2ac0fd;
+                        padding: 5px; 
+                        min-height: 40px;
+                    }
+                `}</style>
+               {this.props.name }
+               <div>{this.props.hour }시 </div>
+            </div>
+        )
     }
 
 

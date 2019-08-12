@@ -14,6 +14,7 @@ import {
 import {hour24to12} from "../supports/time";
 import Scheduler from "./Scheduler";
 import ModalStore from "../stores/modalStore";
+import ScheduleBlock from "./ScheduleBlock";
 
 
 interface IOwnProps {
@@ -56,6 +57,8 @@ export default class Weekly extends React.Component<IOwnProps> {
 
 
     clickDay = (date:IYearMonth, day:number, hour: number) => {
+        let current = new Date();
+
         this.props.modal.open(Scheduler, {
             start : {
                 ...date,
@@ -77,6 +80,7 @@ export default class Weekly extends React.Component<IOwnProps> {
         return (
             <div className='monthly'>
                 <WeeklyTable
+                    schedules={this.props.store.schedules}
                     onClickColumn={this.clickDay}
                     startHour={this.startHour}
                     endHour={this.endHour}
@@ -96,6 +100,7 @@ interface IWeeklyTableProps {
     startHour: number;
     endHour: number;
     onClickColumn: (date: IYearMonth, day:number, h:number) => void;
+    schedules?: Array<any>;
 }
 
 
@@ -103,6 +108,22 @@ interface IWeeklyTableProps {
 class WeeklyTable extends React.Component<IWeeklyTableProps> {
     constructor(props){
         super(props)
+    }
+
+    @computed
+    get scheduleMap() {
+        let map = {};
+        for(let i =0; i < this.props.schedules.length; i++ ){
+            let schedule = this.props.schedules[i];
+            let dateId = `${schedule.year}-${schedule.month}-${schedule.day}`;
+
+            if( !map[dateId] ){
+                map[dateId] = [];
+            }
+            map[dateId].push(schedule);
+
+        }
+        return map;
     }
 
     @computed
@@ -187,11 +208,19 @@ class WeeklyTable extends React.Component<IWeeklyTableProps> {
                 criterion = this.nextMonthCriterion;
             }
 
+
+            let schedules = this.scheduleMap[`${criterion.year}-${criterion.month}-${day}`] || [];
+            let foundCurrentSchedule = schedules.find((sc) => sc.hour === h );
+
+            console.log(foundCurrentSchedule, schedules);
+
             columns.push(
                 <td className="hour" key={i} onClick={() => this.clickColumn(h, day, criterion)}>
 
                     <div className='column-wrapper'>
-
+                        { foundCurrentSchedule && (
+                            <ScheduleBlock {...foundCurrentSchedule} type={'block'}/>
+                        )}
                     </div>
                 </td>
             )

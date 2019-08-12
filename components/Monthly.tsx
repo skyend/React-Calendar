@@ -40,18 +40,21 @@ export default class Monthly extends React.Component<IOwnProps> {
     }
 
     clickDay = (date:IYearMonth, day:number) => {
+        let current = new Date();
+
+
         this.props.modal.open(Scheduler, {
             start : {
                 ...date,
                 day,
-                hour:1,
+                hour:current.getUTCHours(),
                 minute: 0,
             },
 
             end : {
                 ...date,
                 day,
-                hour:2,
+                hour:current.getUTCHours()+1,
                 minute: 0,
             }
         });
