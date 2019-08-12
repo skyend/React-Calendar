@@ -130,8 +130,8 @@ export type IStoreSnapshotOut = SnapshotOut<typeof Store>
 export const initializeStore = (isServer, snapshot = null) => {
     let date = new Date();
 
-    const year = date.getUTCFullYear();
-    const month = date.getUTCMonth();
+    const year = date.getFullYear();
+    const month = date.getMonth();
 
     if (isServer) {
         store = Store.create({ year, month, lastUpdate: Date.now(), type:'monthly', week:0, startHour : 8, endHour: 22, dragSchedule: null, hoveringCell:null})

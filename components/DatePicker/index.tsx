@@ -24,7 +24,7 @@ export default class DatePicker extends React.Component<IMyOwnProps> {
         let date = new Date();
         this.state = {
             year : this.props.year || date.getFullYear(),
-            month: this.props.month || date.getUTCMonth()
+            month: this.props.month || date.getMonth()
         }
     }
 
