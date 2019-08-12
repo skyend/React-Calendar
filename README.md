@@ -23,7 +23,7 @@ $ yarn build
 $ yarn start
 ```
 
-## Todo
+## Works
 
 * 중복일정 체크 o
 * 드래그앤드롭 o
