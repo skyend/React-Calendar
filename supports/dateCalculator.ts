@@ -119,7 +119,6 @@ export function buildCalendarDaysMap(totalScreenDays, monthBeginDayOfWeek, month
     let startDay = lastMonthDays - monthBeginDayOfWeek;
     let arrayMap = [];
 
-
     let cursor ;
     for(let i = 0; i < rows; i++ ){
         arrayMap.push([]);
@@ -144,5 +143,5 @@ export function monthBeginDayOfWeek(date:IYearMonth) {
     // find out day of Week of the first day of Month
     const nativeDate = new Date(`${date.year}/${date.month+1}/1`);
 
-    return nativeDate.getUTCDay();
+    return nativeDate.getDay();
 }

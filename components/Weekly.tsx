@@ -172,7 +172,7 @@ class WeeklyTable extends React.Component<IWeeklyTableProps> {
         // find out day of Week of the first day of Month
         const date = new Date(`${this.props.year}/${this.props.month+1}/1`);
 
-        return date.getUTCDay();
+        return date.getDay();
     }
 
     @computed
