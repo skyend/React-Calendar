@@ -1,9 +1,10 @@
 import React from 'react';
+import axios from 'axios';
 import ControlView from '../components/ControlView';
 import CalendarView from '../components/CalendarView';
 import '../assets/style/calendar.less'
 
-export default () => <div className='calendar'>
+const Render = () => <div className='calendar'>
     <style jsx>
         {`
             .calendar {
@@ -18,3 +19,19 @@ export default () => <div className='calendar'>
     <ControlView/>
     <CalendarView/>
 </div>
+
+
+export default class Index extends React.Component {
+    static async getInitialProps(ctx, store){
+        let res = await axios.get(`http://localhost:${process.env.PORT}/api/schedule/all`);
+
+        if( res.data.code === 'success' ){
+
+            await store.updateSchedules(res.data.items);
+        }
+    }
+
+    render(){
+        return <Render></Render>;
+    }
+}

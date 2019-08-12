@@ -13,6 +13,7 @@ import {
 } from "../supports/dateCalculator";
 import ModalStore from "../stores/modalStore";
 import Scheduler from "./Scheduler";
+import ScheduleBlock from "./ScheduleBlock";
 
 
 interface IOwnProps {
@@ -60,7 +61,7 @@ export default class Monthly extends React.Component<IOwnProps> {
     render(){
         return (
             <div className='monthly'>
-                <MonthlyTable month={this.currentMonth} year={this.currentYear} onClickColumn={ this.clickDay }/>
+                <MonthlyTable month={this.currentMonth} year={this.currentYear} onClickColumn={ this.clickDay } schedules={this.props.store.schedules}/>
             </div>
         )
     }
@@ -73,6 +74,7 @@ interface IMonthlyTableProps {
     columnHeight?: number;
     fontSize?: number;
     selected?: IYearMonth;
+    schedules?: Array<any>;
 }
 
 
@@ -85,6 +87,22 @@ export class MonthlyTable extends React.Component<IMonthlyTableProps> {
 
     constructor(props){
         super(props)
+    }
+
+    @computed
+    get scheduleMap() {
+        let map = {};
+        for(let i =0; i < this.props.schedules.length; i++ ){
+            let schedule = this.props.schedules[i];
+            let dateId = `${schedule.year}-${schedule.month}-${schedule.day}`;
+
+            if( !map[dateId] ){
+                map[dateId] = [];
+            }
+            map[dateId].push(schedule);
+
+        }
+        return map;
     }
 
     @computed
@@ -183,6 +201,8 @@ export class MonthlyTable extends React.Component<IMonthlyTableProps> {
         }
 
 
+        let schedules = this.scheduleMap[`${criterion.year}-${criterion.month}-${day}`] || [];
+
 
         return (
             <td
@@ -263,6 +283,7 @@ export class MonthlyTable extends React.Component<IMonthlyTableProps> {
                     </div>
                 </div>
 
+                {schedules.map((sc) => <ScheduleBlock {...sc} type='label'/>)}
             </td>
         )
     }

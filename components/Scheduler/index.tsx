@@ -1,10 +1,19 @@
 import React from 'react';
 import classnames from 'classnames';
+import axios from 'axios';
 import zeroPadding from "../../supports/padding";
 import DatePicker from "../DatePicker/async";
 import TimePicker from "../TimePicker/async";
 import {hour24to12} from "../../supports/time";
 
+interface IItem {
+    id: string;
+    year: number;
+    month: number;
+    day: number;
+    hour: number;
+    name: string;
+}
 
 interface ITime {
     hour: number;
@@ -46,15 +55,39 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
         }
     }
 
-    delete = () => {
-
-    }
-
-    save = () => {
+    delete = async () => {
         if( !this.state.title ){
             alert('Input the schedule title');
             return;
         }
+
+        let id = `${this.state.start.year}-${this.state.start.month}-${this.state.start.day}-${this.state.start.hour}`;
+
+
+        let res = await axios.delete('/api/schedule/' + id);
+
+        console.log(res);
+    }
+
+    save = async () => {
+        if( !this.state.title ){
+            alert('Input the schedule title');
+            return;
+        }
+
+        let item : IItem  = {
+            id: `${this.state.start.year}-${this.state.start.month}-${this.state.start.day}-${this.state.start.hour}`,
+            year: this.state.start.year,
+            month : this.state.start.month,
+            day: this.state.start.day,
+            hour: this.state.start.hour,
+            name : this.state.title,
+        };
+
+
+        let res = await axios.post('/api/schedule/save', item);
+
+        console.log(res);
     }
 
     inputTitle = (e) => {

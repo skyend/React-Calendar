@@ -7,8 +7,9 @@ import {
     types,
 } from 'mobx-state-tree'
 import {decreaseMonth, decreaseWeek, increaseMonth, increaseWeek} from "../supports/dateCalculator";
+import {ScheduleModel} from "./scheduleModel";
 
-let store: IStore = null as any
+let store: IStore = null as any;
 
 const Store = types
     .model({
@@ -19,8 +20,16 @@ const Store = types
         type: types.string,
         startHour: types.number,
         endHour: types.number,
+
+        schedules: types.array(ScheduleModel),
     })
     .actions(self => {
+
+        const updateSchedules = (schedules) => {
+            self.lastUpdate = new Date();
+
+            self.schedules = schedules;
+        }
 
         const showMonthly = () => {
             self.lastUpdate = new Date();
@@ -96,7 +105,7 @@ const Store = types
             self.week = week;
         }
 
-        return { prevMonth, prevYear, nextMonth, nextYear, showMonthly, showWeekly, nextWeek, prevWeek }
+        return { prevMonth, prevYear, nextMonth, nextYear, showMonthly, showWeekly, nextWeek, prevWeek, updateSchedules }
     })
 
 export type IStore = Instance<typeof Store>
@@ -108,7 +117,6 @@ export const initializeStore = (isServer, snapshot = null) => {
 
     const year = date.getUTCFullYear();
     const month = date.getUTCMonth();
-
 
     if (isServer) {
         store = Store.create({ year, month, lastUpdate: Date.now(), type:'monthly', week:0, startHour : 8, endHour: 22})

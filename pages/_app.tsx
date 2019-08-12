@@ -19,14 +19,14 @@ class MyApp extends App {
         // we can initialize our store
         //
         const isServer = typeof window === 'undefined'
-        const store = initializeStore(isServer)
+        const store = await initializeStore(isServer)
         //
         // Check whether the page being rendered by the App has a
         // static getInitialProps method and if so call it
         //
         let pageProps = {}
         if (Component.getInitialProps) {
-            pageProps = await Component.getInitialProps(ctx)
+            pageProps = await Component.getInitialProps(ctx, store)
         }
         return {
             initialState: getSnapshot(store),
