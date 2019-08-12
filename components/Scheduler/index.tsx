@@ -34,6 +34,7 @@ interface IMyOwnProps {
     store?: IStore;
     start: IDate;
     end: IDate;
+    title?:string;
     close? : () => void;
 }
 
@@ -56,7 +57,7 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
             end: props.end,
             datePickerTarget: '',
             timePickerTarget: '',
-            title:'',
+            title:this.props.title || '',
         }
     }
 

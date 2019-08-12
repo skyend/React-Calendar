@@ -1,7 +1,9 @@
+
 const express = require('express')
 const next = require('next')
 const bodyParser = require('body-parser')
-const port = parseInt(process.env.PORT, 10) || 3000
+const config = require('../config');
+const port = config.PORT;
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
