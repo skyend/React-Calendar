@@ -1,5 +1,8 @@
 # Start Application
 
+100% self-developed all about The Calendar.
+
+Didn't use any other UI Library.
 
 Tested In ..
 * NodeJS Version 10.15.3
@@ -16,3 +19,12 @@ $ yarn start
 * 드래그앤드롭 o
 * 스케줄 블럭 클릭시 조정 팝업 o
 * Weekly Hour Range o
+
+
+# License
+
+MIT 
+
+# Author
+
+SKYEND - theskyend0@gmail.com
