@@ -17,8 +17,7 @@ const Render = () => <div >
             .calendar {
                 min-width:1024px;
                 width:70%;
-                margin:auto;
-                margin-top:100px;
+                margin:100px auto; 
                 border:1px solid #333;
                 box-shadow: 50px 50px 0px 0px #6b94debf;
             }
