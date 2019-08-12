@@ -75,7 +75,7 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
             return;
         }
 
-        let id = getId({
+        const id = getId({
             year : this.state.start.year,
             month: this.state.start.month,
             day : this.state.start.day,
@@ -83,7 +83,7 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
         });
 
 
-        let res = await axios.delete('/api/schedule/' + id);
+        await axios.delete('/api/schedule/' + id);
         await this.update();
     }
 
@@ -93,7 +93,8 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
             return;
         }
 
-        let id = getId({
+
+        const id = getId({
             year : this.state.start.year,
             month: this.state.start.month,
             day : this.state.start.day,
@@ -102,17 +103,26 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
 
         try{
 
-            let duplicateCheckRes = await axios.get(`/api/schedule/${id}/read`);
+            const duplicateCheckRes = await axios.get(`/api/schedule/${id}/read`);
             if( duplicateCheckRes.data.code === 'success' && duplicateCheckRes.data.item ){
                 return alert('중복일정은 등록할 수 없습니다');
             }
         } catch (e){
+
+            const originId = getId({
+                year : this.props.start.year,
+                month: this.props.start.month,
+                day : this.props.start.day,
+                hour: this.props.start.hour,
+            });
+
             // not found duplicate. So pass
+
+            // delete old schedule
+            await axios.delete(`/api/schedule/${originId}`);
         }
 
-
-
-        let item : IItem  = {
+        const item : IItem  = {
             id,
             year: this.state.start.year,
             month : this.state.start.month,
@@ -122,7 +132,7 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
         };
 
 
-        let res = await instance().post('/api/schedule/save', item);
+        await instance().post('/api/schedule/save', item);
         await this.update();
     }
 

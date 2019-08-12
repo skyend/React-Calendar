@@ -43,6 +43,7 @@ app.prepare().then(() => {
 
     server.get('/api/schedule/:id/read', ( req, res, next ) => {
         const itemId = req.params.id;
+        console.log('itemId',itemId);
         const found = db.find((item) => itemId === item.id );
 
         if( found ){

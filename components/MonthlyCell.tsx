@@ -30,8 +30,8 @@ export default class MonthlyCell extends React.Component<IMyOwnProps> {
     onDragOver = (e) => {
         e.preventDefault(); // for allow drop action
 
-        let { year, month } = this.props.criterion;
-        let { day } = this.props;
+        const { year, month } = this.props.criterion;
+        const { day } = this.props;
 
         this.props.store.hoverCell({
             year,
@@ -42,11 +42,11 @@ export default class MonthlyCell extends React.Component<IMyOwnProps> {
 
     drop = async (e) => {
 
-        let { year, month } = this.props.criterion;
-        let { day } = this.props;
+        const { year, month } = this.props.criterion;
+        const { day } = this.props;
 
         // check Duplicated
-        let birthId = getId({
+        const birthId = getId({
             year,
             month,
             day,
@@ -54,7 +54,7 @@ export default class MonthlyCell extends React.Component<IMyOwnProps> {
         });
 
         try{
-            let dpCkRes = await instance().get(`/api/schedule/${birthId}`);
+            const dpCkRes = await instance().get(`/api/schedule/${birthId}`);
 
             if( dpCkRes.data && dpCkRes.data.code === 'success' ){
                 this.props.store.endDrag();
@@ -63,7 +63,7 @@ export default class MonthlyCell extends React.Component<IMyOwnProps> {
         } catch (e) {
             await instance().delete(`/api/schedule/${this.props.store.dragSchedule.id}`);
 
-            let res = await instance().post('/api/schedule/save', {
+            await instance().post('/api/schedule/save', {
                 year,
                 month,
                 day,
@@ -84,23 +84,23 @@ export default class MonthlyCell extends React.Component<IMyOwnProps> {
 
     render(){
         let schedules = this.props.schedules;
-        let hoveringCell = this.props.store.hoveringCell;
+        const hoveringCell = this.props.store.hoveringCell;
 
 
 
         if( hoveringCell && this.props.store.dragSchedule ){
 
             // Current Cell Info
-            let { year, month } = this.props.criterion;
-            let { day } = this.props;
+            const { year, month } = this.props.criterion;
+            const { day } = this.props;
 
 
 
             if( hoveringCell.year === year && hoveringCell.month === month && hoveringCell.day === day ){
 
                 // Dragging Schedule Info
-                let hour = this.props.store.dragSchedule.hour;
-                let name = this.props.store.dragSchedule.name;
+                const hour = this.props.store.dragSchedule.hour;
+                const name = this.props.store.dragSchedule.name;
 
                 schedules = [
                     ...schedules,

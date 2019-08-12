@@ -42,7 +42,7 @@ export default class Monthly extends React.Component<IOwnProps> {
     }
 
     clickDay = (date:IYearMonth, day:number) => {
-        let current = new Date();
+        const current = new Date();
 
 
         this.props.modal.open(Scheduler, {
@@ -103,10 +103,13 @@ export class MonthlyTable extends React.Component<IMonthlyTableProps> {
 
     @computed
     get scheduleMap() {
-        let map = {};
+        if( !this.props.schedules ) return [];
+        const map = {};
+        let schedule;
+        let dateId;
         for(let i =0; i < this.props.schedules.length; i++ ){
-            let schedule = this.props.schedules[i];
-            let dateId = `${schedule.year}-${schedule.month}-${schedule.day}`;
+            schedule = this.props.schedules[i];
+            dateId = `${schedule.year}-${schedule.month}-${schedule.day}`;
 
             if( !map[dateId] ){
                 map[dateId] = [];
