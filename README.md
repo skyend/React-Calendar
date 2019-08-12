@@ -1,19 +1,22 @@
-# Start Application
+# Calendar For Kakao Pay
 
 100% self-developed all about The Calendar.
 
 Didn't use any other UI Library.
 
-Tested In ..
+# Start Application
+
+## Tested In 
 * NodeJS Version 10.15.3
 * YARN Version 1.16.0
 
-
+## Commands
 ```
 $ yarn install
 $ yarn start
 ```
 
+## Todo
 
 * 중복일정 체크 o
 * 드래그앤드롭 o
