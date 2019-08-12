@@ -272,7 +272,7 @@ class WeeklyTable extends React.Component<IWeeklyTableProps> {
         let [minHour, maxHour] = this.hourRange;
 
         let convertdHour ;
-        for(let i = minHour; i < maxHour; i++ ){
+        for(let i = minHour; i <= maxHour; i++ ){
             convertdHour = hour24to12(i);
 
 
