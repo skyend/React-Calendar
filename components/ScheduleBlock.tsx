@@ -92,8 +92,12 @@ export default class ScheduleBlock extends React.Component<IScheduleProps> {
                         padding: 5px;
                         margin-bottom: 2px;
                     }
+                    
+                    .icon {
+                        width:20px;
+                    }
                 `}</style>
-                ⃝  {convertedHour.am ? "오전":"오후"}  {convertedHour.hour }시 / {this.props.name }
+               <div className='icon'>⃝</div>   {convertedHour.am ? "오전":"오후"}  {convertedHour.hour }시 / {this.props.name }
             </div>
         )
     }
