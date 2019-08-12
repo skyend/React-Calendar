@@ -47,14 +47,14 @@ export default class Monthly extends React.Component<IOwnProps> {
             start : {
                 ...date,
                 day,
-                hour:current.getUTCHours(),
+                hour:current.getHours(),
                 minute: 0,
             },
 
             end : {
                 ...date,
                 day,
-                hour:current.getUTCHours()+1,
+                hour:current.getHours()+1,
                 minute: 0,
             }
         });
@@ -205,6 +205,13 @@ export class MonthlyTable extends React.Component<IMonthlyTableProps> {
 
 
         let schedules = this.scheduleMap[`${criterion.year}-${criterion.month}-${day}`] || [];
+        schedules.sort((a,b) => {
+            if( a.hour > b.hour ){
+                return 1;
+            } else {
+                return -1;
+            }
+        });
 
 
         return (

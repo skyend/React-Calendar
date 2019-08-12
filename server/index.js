@@ -38,6 +38,16 @@ app.prepare().then(() => {
         console.log(db);
     });
 
+    server.get('/api/schedule/:id', ( req, res, next ) => {
+        const itemId = req.params.id;
+        const found = db.find((item) => itemId === item.id );
+
+        if( found ){
+            res.status(200).json({code:'success', item:found});
+        } else {
+            res.status(404).json({code:'fail'});
+        }
+    });
 
     server.get('*', (req, res) => {
         return handle(req, res)

@@ -91,8 +91,22 @@ export default class Scheduler extends React.Component<IMyOwnProps> {
             return;
         }
 
+        const id = `${this.state.start.year}-${this.state.start.month}-${this.state.start.day}-${this.state.start.hour}`;
+
+        try{
+
+            let duplicateCheckRes = await axios.get(`/api/schedule/${id}`);
+            if( duplicateCheckRes.data.code === 'success' && duplicateCheckRes.data.item ){
+                return alert('중복일정은 등록할 수 없습니다');
+            }
+        } catch (e){
+            // not found duplicate. So pass
+        }
+
+
+
         let item : IItem  = {
-            id: `${this.state.start.year}-${this.state.start.month}-${this.state.start.day}-${this.state.start.hour}`,
+            id,
             year: this.state.start.year,
             month : this.state.start.month,
             day: this.state.start.day,
