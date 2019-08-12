@@ -59,7 +59,6 @@ export default class Weekly extends React.Component<IOwnProps> {
 
 
     clickDay = (date:IYearMonth, day:number, hour: number) => {
-        let current = new Date();
 
         this.props.modal.open(Scheduler, {
             start : {
@@ -113,6 +112,44 @@ class WeeklyTable extends React.Component<IWeeklyTableProps> {
     constructor(props){
         super(props)
     }
+
+    @computed
+    get hourRange(){
+
+        let maxHour = 22;
+        let minHour = 10;
+
+
+        let schedule;
+        for(let i = 0; i < 7; i++ ){
+            let day = this.daysMap[this.props.week][i];
+
+
+            let criterion = this.currentMonthCriterion;
+            if( this.props.week === 0 && day > 7 ){
+                criterion = this.lastMonthCriterion;
+            }
+
+            if( this.props.week > 3 && day < 7 ){
+                criterion = this.nextMonthCriterion;
+            }
+
+
+            let schedules = this.scheduleMap[`${criterion.year}-${criterion.month}-${day}`] || [];
+
+
+            for(let j = 0; j < schedules.length; j++ ){
+                schedule = schedules[j];
+
+                maxHour = Math.max(schedule.hour, maxHour);
+
+                minHour = Math.min(schedule.hour, minHour);
+            }
+        }
+
+        return [minHour, maxHour];
+    }
+
 
     @computed
     get scheduleMap() {
@@ -192,9 +229,6 @@ class WeeklyTable extends React.Component<IWeeklyTableProps> {
     }
 
 
-    clickColumn(h, day, date: IYearMonth){
-        this.props.onClickColumn(date, day, h);
-    }
 
     renderColumns(h){
         let columns = [];
@@ -235,9 +269,10 @@ class WeeklyTable extends React.Component<IWeeklyTableProps> {
 
     renderRows(){
         let rows = [];
+        let [minHour, maxHour] = this.hourRange;
 
         let convertdHour ;
-        for(let i = this.props.startHour; i < this.props.endHour; i++ ){
+        for(let i = minHour; i < maxHour; i++ ){
             convertdHour = hour24to12(i);
 
 

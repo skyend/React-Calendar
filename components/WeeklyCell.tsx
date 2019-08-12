@@ -21,7 +21,7 @@ interface IMyOwnProps {
     modal?: ModalStore;
 }
 
-@inject('store')
+@inject('store', 'modal')
 @observer
 export default class WeeklyCell extends React.Component<IMyOwnProps> {
     onDragOver = (e) => {
@@ -85,6 +85,7 @@ export default class WeeklyCell extends React.Component<IMyOwnProps> {
         let current = new Date();
 
         this.props.modal.open(Scheduler, {
+            updateSchedules: this.props.updateSchedules,
             start : {
                 ...date,
                 day,

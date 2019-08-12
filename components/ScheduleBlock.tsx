@@ -5,6 +5,7 @@ import SchedulerAsync from "./Scheduler/async";
 import ModalStore from "../stores/modalStore";
 import {IStore} from "../stores";
 import {getId} from "../supports/schedule";
+import {hour24to12} from "../supports/time";
 
 interface IScheduleProps {
     name: string;
@@ -78,6 +79,8 @@ export default class ScheduleBlock extends React.Component<IScheduleProps> {
     }
 
     renderLabel(){
+        const convertedHour = hour24to12(this.props.hour);
+
         return (
             <div className='label'>
                 <style jsx>{`
@@ -90,12 +93,13 @@ export default class ScheduleBlock extends React.Component<IScheduleProps> {
                         margin-bottom: 2px;
                     }
                 `}</style>
-                ⃝ {this.props.hour }시 / {this.props.name }
+                ⃝  {convertedHour.am ? "오전":"오후"}  {convertedHour.hour }시 / {this.props.name }
             </div>
         )
     }
 
     renderBlock(){
+        const convertedHour = hour24to12(this.props.hour);
         return (
             <div className='label'>
                 <style jsx>{`
@@ -109,7 +113,7 @@ export default class ScheduleBlock extends React.Component<IScheduleProps> {
                     }
                 `}</style>
                {this.props.name }
-               <div>{this.props.hour }시 </div>
+               <div>  {convertedHour.am ? "오전":"오후"}  {convertedHour.hour }시 </div>
             </div>
         )
     }
