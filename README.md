@@ -13,6 +13,7 @@ Didn't use any other UI Library.
 ## Commands
 ```
 $ yarn install
+$ yarn build
 $ yarn start
 ```
 
