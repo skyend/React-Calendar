@@ -29,11 +29,10 @@ $ yarn build
 $ yarn start
 ```
 
-## Works
+## Features
 
-* 중복일정 체크 o
-* 드래그앤드롭 o
-* 스케줄 블럭 클릭시 조정 팝업 o
+* Check Duplicated Date 
+* Drag & Drop to change Date 
 * Weekly Hour Range o
 
 
