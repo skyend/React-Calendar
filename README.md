@@ -1,4 +1,4 @@
-# Kakao Calendar
+# React Calendar
 
 100% self-developed all about The Calendar.
 
