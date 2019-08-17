@@ -11,6 +11,12 @@ Didn't use any other UI Library.
 
 # Start Application
 
+## Components
+
+* React
+* NextJS
+* Typescript
+
 ## RUNNING ENVIRONMENT
 * Ubuntu 18.04 / CentOS 7.5 / MacOS
 * NodeJS Version 10.15.3
