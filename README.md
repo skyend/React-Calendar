@@ -2,7 +2,20 @@
 
 100% self-developed all about The Calendar.
 
-Didn't use any other UI Library.
+Didn't use any other UI Libraries.
+
+
+## Features
+
+* Check Duplicated Date 
+* Drag & Drop to change Date 
+* Weekly Hour Range 
+
+## Components
+
+* React
+* NextJS
+* Typescript
 
 ## TESTED IN
 
@@ -11,11 +24,6 @@ Didn't use any other UI Library.
 
 # Start Application
 
-## Components
-
-* React
-* NextJS
-* Typescript
 
 ## RUNNING ENVIRONMENT
 * Ubuntu 18.04 / CentOS 7.5 / MacOS
@@ -29,11 +37,6 @@ $ yarn build
 $ yarn start
 ```
 
-## Features
-
-* Check Duplicated Date 
-* Drag & Drop to change Date 
-* Weekly Hour Range o
 
 
 # License
